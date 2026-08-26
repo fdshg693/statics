@@ -1,0 +1,53 @@
+{
+	auto_https off
+}
+
+:80 {
+	handle_path /alpine_todo/* {
+		root * /srv/alpine_todo
+		file_server
+	}
+	handle_path /blackjack/* {
+		root * /srv/blackjack
+		file_server
+	}
+	handle_path /simple_login/* {
+		root * /srv/simple_login
+		file_server
+	}
+	handle_path /vanilla_circle_cross/* {
+		root * /srv/vanilla_circle_cross
+		file_server
+	}
+	handle_path /vue_janken/* {
+		root * /srv/vue_janken
+		file_server
+	}
+	handle_path /vue_rpg/* {
+		root * /srv/vue_rpg
+		file_server
+	}
+	handle_path /svelte_baseball/* {
+		root * /srv/svelte_baseball
+		file_server
+	}
+	handle /htmx_sugoroku/api/* {
+		uri strip_prefix /htmx_sugoroku
+		reverse_proxy htmx-sugoroku-api:5000
+	}
+	handle /htmx_sugoroku/info {
+		uri strip_prefix /htmx_sugoroku
+		reverse_proxy htmx-sugoroku-api:5000
+	}
+	handle_path /htmx_sugoroku/* {
+		root * /srv/htmx_sugoroku
+		file_server
+	}
+	handle_path /cdn_resources/* {
+		root * /srv/cdn_resources
+		file_server
+	}
+	handle / {
+		respond "StaticApps index (TODO: build a real landing page)" 200
+	}
+}

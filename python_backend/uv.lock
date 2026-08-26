@@ -76,12 +76,14 @@ version = "0.1.0"
 source = { editable = "packages/htmx_sugoroku_server" }
 dependencies = [
     { name = "flask" },
+    { name = "flask-cors" },
     { name = "util" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "flask", specifier = ">=3.1.2" },
+    { name = "flask-cors", specifier = ">=6.0.2" },
     { name = "util", editable = "packages/util" },
 ]
 

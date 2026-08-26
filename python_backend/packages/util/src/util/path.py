@@ -1,23 +1,23 @@
-# 親ディレクトリを遡っていきCodeRootフォルダをみつけ、その絶対パスを返す
+# 親ディレクトリを遡っていき、cdn_resources を子に持つ最も近い祖先(=リポジトリルート)を返す
 
 from pathlib import Path
 
 
-def find_code_root() -> Path:
+def find_repo_root() -> Path:
     """
-    親ディレクトリを遡っていきCodeRootフォルダを見つけ、その絶対パスを返す
-    
+    親ディレクトリを遡っていき、cdn_resources ディレクトリを直下に持つ
+    最も近い祖先ディレクトリ(リポジトリルート)を見つけて返す
+
     Returns:
-        Path: CodeRootフォルダの絶対パス
-        
+        Path: リポジトリルートの絶対パス
+
     Raises:
-        FileNotFoundError: CodeRootフォルダが見つからない場合
+        FileNotFoundError: リポジトリルートが見つからない場合
     """
     current_path = Path(__file__).resolve()
-    
-    # 親ディレクトリを遡って検索
+
     for parent in [current_path] + list(current_path.parents):
-        if parent.name == "CodeRoot":
+        if (parent / "cdn_resources").is_dir():
             return parent
-    
-    raise FileNotFoundError("CodeRoot folder not found in parent directories")
+
+    raise FileNotFoundError("cdn_resources を子に持つリポジトリルートが見つかりません")

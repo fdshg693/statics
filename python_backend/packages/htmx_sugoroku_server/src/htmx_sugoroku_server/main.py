@@ -2,12 +2,12 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import random
 import uuid
-from util.path import find_code_root
+from util.path import find_repo_root
 
 # 静的ファイルのパスを設定
-code_root = find_code_root()
-STATIC_FILES_DIR = code_root / 'StaticApps' / 'apps' / 'htmx_sugoroku'
-CDN_RESOURCES_DIR = code_root / 'StaticApps' / 'cdn_resources'
+code_root = find_repo_root()
+STATIC_FILES_DIR = code_root / 'apps' / 'htmx_sugoroku'
+CDN_RESOURCES_DIR = code_root / 'cdn_resources'
 
 app = Flask(__name__)
 CORS(app)
