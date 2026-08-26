@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ブラックジャック</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="table">
+    <h1>ブラックジャック</h1>
+
+    <section class="hand" aria-label="ディーラーの手札">
+      <h2>ディーラー <span id="dealer-score" class="score"></span></h2>
+      <div id="dealer-cards" class="cards"></div>
+    </section>
+
+    <section class="hand" aria-label="プレイヤーの手札">
+      <h2>プレイヤー <span id="player-score" class="score"></span></h2>
+      <div id="player-cards" class="cards"></div>
+    </section>
+
+    <p id="message" class="message" role="status" aria-live="polite">ベット額を選んで「配る」を押してください</p>
+
+    <div class="bank">
+      <span>所持コイン: <strong id="coins">10</strong></span>
+      <span>ベット: <strong id="bet">0</strong></span>
+    </div>
+
+    <div id="bet-controls" class="bet-controls" aria-label="ベット額">
+      <button type="button" data-bet="1">+1</button>
+      <button type="button" data-bet="5">+5</button>
+      <button type="button" data-bet="all">全額</button>
+      <button type="button" data-bet="0">クリア</button>
+    </div>
+
+    <div class="controls">
+      <button id="deal-btn" type="button" disabled>配る</button>
+      <button id="hit-btn" type="button" disabled>ヒット</button>
+      <button id="stand-btn" type="button" disabled>スタンド</button>
+      <button id="double-btn" type="button" disabled>ダブルダウン</button>
+      <button id="surrender-btn" type="button" disabled>サレンダー</button>
+      <button id="next-btn" type="button" hidden>次のラウンドへ</button>
+      <button id="reset-btn" type="button" hidden>リスタート（10コイン）</button>
+    </div>
+
+    <div class="scoreboard">
+      <span>勝ち: <strong id="wins">0</strong></span>
+      <span>負け: <strong id="losses">0</strong></span>
+      <span>引き分け: <strong id="pushes">0</strong></span>
+    </div>
+  </main>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

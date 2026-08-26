@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Battle Game - 保存履歴</title>
+    <link rel="stylesheet" href="history.css">
+</head>
+
+<body>
+    <div class="history-container">
+        <h1>📜 保存履歴</h1>
+        <p class="subtitle">保存された冒険の記録を確認できます</p>
+
+        <div class="actions">
+            <button class="back-btn" onclick="window.location.href='index.html'">⬅️ 戻る</button>
+            <button class="clear-btn" id="clearAllBtn">🧹 全削除</button>
+        </div>
+
+        <div class="save-list" id="saveList"></div>
+    </div>
+
+    <script type="module" src="js/screens/history.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+[project]
+name = "simple_deliver"
+version = "0.1.0"
+description = "Simple static file delivery server"
+requires-python = ">=3.13"
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+simple-deliver = "simple_deliver.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/simple_deliver"]
+
+[tool.uv]
+package = true

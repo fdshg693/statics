@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="importmap">
+    {
+      "imports": {
+        "solid-js": "https://cdn.jsdelivr.net/npm/solid-js@1.9.5/dist/solid.js",
+        "solid-js/web": "https://cdn.jsdelivr.net/npm/solid-js@1.9.5/web/dist/web.js",
+        "solid-js/html": "https://cdn.jsdelivr.net/npm/solid-js@1.9.5/html/dist/html.js"
+      }
+    }
+  </script>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script type="module">
+        import { createSignal } from "solid-js";
+        import { render } from "solid-js/web";
+        import html from "solid-js/html";
+
+        function Counter() {
+            const [count, setCount] = createSignal(0);
+            return html`
+        <button onClick=${() => setCount(c => c + 1)}>
+          Count: ${count}
+        </button>
+      `;
+        }
+
+        render(Counter, document.getElementById("app"));
+    </script>
+</body>
+
+</html>

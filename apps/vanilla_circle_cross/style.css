@@ -1,0 +1,284 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* 可変ボードサイズ用のCSS変数 */
+    --board-size: 3;
+    --cell-size: 100px;
+    --cell-font-size: 48px;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.container {
+    text-align: center;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 90vw;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: clamp(20px, 5vw, 32px);
+}
+
+/* 設定エリアのスタイル */
+#settings {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.setting-group label {
+    font-weight: bold;
+    color: #333;
+    font-size: 14px;
+}
+
+select {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 2px solid #667eea;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s;
+    outline: none;
+}
+
+select:hover {
+    border-color: #5568d3;
+}
+
+select:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#applySettingsBtn {
+    padding: 12px 30px;
+    font-size: 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#applySettingsBtn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+#applySettingsBtn:active {
+    transform: translateY(0);
+}
+
+#message {
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #667eea;
+    min-height: 30px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(var(--board-size), var(--cell-size));
+    grid-template-rows: repeat(var(--board-size), var(--cell-size));
+    gap: 5px;
+    margin: 0 auto 20px;
+    background: #333;
+    padding: 5px;
+    border-radius: 10px;
+    max-width: fit-content;
+}
+
+.cell {
+    background: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--cell-font-size);
+    font-weight: bold;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+/* セルクリック時のアニメーション */
+.cell:active:not(.taken) {
+    transform: scale(0.95);
+}
+
+.cell:hover:not(.taken) {
+    background: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.cell.taken {
+    cursor: not-allowed;
+    animation: cellPlace 0.3s ease-out;
+}
+
+@keyframes cellPlace {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 勝利セルのハイライト */
+.cell.winning {
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    animation: winningPulse 0.6s ease-in-out infinite alternate;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+@keyframes winningPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+    100% {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+    }
+}
+
+.cell.o {
+    color: #667eea;
+}
+
+.cell.x {
+    color: #764ba2;
+}
+
+#resetBtn {
+    padding: 12px 30px;
+    font-size: 18px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+#resetBtn:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+#resetBtn:active {
+    transform: translateY(0);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    :root {
+        --cell-size: 80px;
+        --cell-font-size: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --cell-size: 60px;
+        --cell-font-size: 28px;
+    }
+
+    #settings {
+        padding: 15px;
+    }
+
+    select {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    #applySettingsBtn,
+    #resetBtn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* 5x5ボード用の調整 */
+.board[data-size="5"] {
+    --cell-size: 70px;
+    --cell-font-size: 32px;
+}
+
+.board[data-size="4"] {
+    --cell-size: 85px;
+    --cell-font-size: 40px;
+}
+
+@media (max-width: 768px) {
+    .board[data-size="5"] {
+        --cell-size: 55px;
+        --cell-font-size: 24px;
+    }
+
+    .board[data-size="4"] {
+        --cell-size: 65px;
+        --cell-font-size: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .board[data-size="5"] {
+        --cell-size: 45px;
+        --cell-font-size: 20px;
+    }
+
+    .board[data-size="4"] {
+        --cell-size: 50px;
+        --cell-font-size: 24px;
+    }
+}

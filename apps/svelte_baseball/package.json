@@ -1,0 +1,26 @@
+{
+  "name": "svelte_baseball",
+  "version": "1.0.0",
+  "description": "Svelte + TypeScript + Vite を前提にした、静的配信向けのシンプルな野球ゲーム案です。\r プレイヤーは投手側のみを操作し、1イニング相当の守備を行います。\r MVP では、投球コースの選択と、カウントを含む打席結果の進行を主題にします。",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "keywords": [],
+  "author": "",
+  "private": true,
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "svelte": "^5.55.9"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@tsconfig/svelte": "^5.0.8",
+    "svelte-check": "^4.4.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
+  }
+}

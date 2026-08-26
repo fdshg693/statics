@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>すごろくゲーム - HTMX</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="./cdn_resources/htmx.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>すごろくゲーム</h1>
+
+        <!-- ゲーム設定セクション -->
+        <div class="settings">
+            <label for="api-url">バックエンドURL:</label>
+            <input type="text" id="api-url" value="" placeholder="http://localhost:5000">
+            <p class="help-text">※ 開発モード（MSW）時は空欄でOK。本番時はバックエンドURLを入力</p>
+        </div>
+
+        <!-- ゲームエリア -->
+        <div id="game-area">
+            <div class="game-info">
+                <p>スタートボタンを押してゲームを開始してください</p>
+            </div>
+
+            <div class="board-container">
+                <div class="board" id="board">
+                    <!-- ボードのマスは動的に生成 -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-start">ゲームスタート</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

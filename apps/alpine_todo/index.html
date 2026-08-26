@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoアプリ</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="js/shared/orderManager.js"></script>
+    <script src="js/shared/toast.js"></script>
+    <script src="js/shared/todoRepository.js"></script>
+    <script src="js/shared/todoService.js"></script>
+    <script src="js/todo/todoQuery.js"></script>
+    <script src="js/todo/todoSort.js"></script>
+    <script src="js/todo/dragDropController.js"></script>
+    <script src="js/todoStore.js"></script>
+    <script src="js/todoApp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script defer src="../../cdn_resources/alpine.min.js"></script>
+</head>
+
+<body>
+    <div class="container" x-data="todoApp">
+        <header>
+            <h1>ToDoアプリ</h1>
+            <a href="stats.html">📊 統計・分析を見る →</a>
+        </header>
+
+        <div class="add-todo">
+            <div class="add-todo-fields">
+                <input type="text" x-model="newTodoTitle" @keyup.enter="addTodo" placeholder="タイトルを入力..." class="todo-input">
+                <textarea x-model="newTodoDescription" placeholder="本文を入力（任意）..." class="todo-textarea"></textarea>
+            </div>
+            <button @click="addTodo" class="btn-add">追加</button>
+        </div>
+
+        <div class="filters">
+            <button @click="setFilter('all')" :class="{ 'active': filter === 'all' }" class="btn-filter">
+                全て (<span x-text="totalCount"></span>)
+            </button>
+            <button @click="setFilter('active')" :class="{ 'active': filter === 'active' }" class="btn-filter">
+                未完了 (<span x-text="activeCount"></span>)
+            </button>
+            <button @click="setFilter('completed')" :class="{ 'active': filter === 'completed' }" class="btn-filter">
+                完了済み (<span x-text="completedCount"></span>)
+            </button>
+        </div>
+
+        <div class="search-filters">
+            <input type="text" x-model="searchText" placeholder="タイトル・本文で検索..." class="search-input">
+            <div class="date-filters">
+                <label class="date-label">
+                    開始日
+                    <input type="date" x-model="dateFrom" class="date-input">
+                </label>
+                <label class="date-label">
+                    終了日
+                    <input type="date" x-model="dateTo" class="date-input">
+                </label>
+            </div>
+        </div>
+
+        <div class="sort-controls">
+            <span class="sort-label">ソート:</span>
+            <button @click="toggleSort('text')" class="btn-sort" :class="{ 'active': getSortInfo('text').dir }">
+                タイトル
+                <template x-if="getSortInfo('text').dir === 'asc'"><span class="sort-indicator">↑<sup x-text="getSortInfo('text').priority"></sup></span></template>
+                <template x-if="getSortInfo('text').dir === 'desc'"><span class="sort-indicator">↓<sup x-text="getSortInfo('text').priority"></sup></span></template>
+            </button>
+            <button @click="toggleSort('createdAt')" class="btn-sort" :class="{ 'active': getSortInfo('createdAt').dir }">
+                作成日
+                <template x-if="getSortInfo('createdAt').dir === 'asc'"><span class="sort-indicator">↑<sup x-text="getSortInfo('createdAt').priority"></sup></span></template>
+                <template x-if="getSortInfo('createdAt').dir === 'desc'"><span class="sort-indicator">↓<sup x-text="getSortInfo('createdAt').priority"></sup></span></template>
+            </button>
+            <button @click="toggleSort('completed')" class="btn-sort" :class="{ 'active': getSortInfo('completed').dir }">
+                状態
+                <template x-if="getSortInfo('completed').dir === 'asc'"><span class="sort-indicator">↑<sup x-text="getSortInfo('completed').priority"></sup></span></template>
+                <template x-if="getSortInfo('completed').dir === 'desc'"><span class="sort-indicator">↓<sup x-text="getSortInfo('completed').priority"></sup></span></template>
+            </button>
+            <button @click="clearSort()" x-show="isSorted" class="btn-sort-clear">クリア</button>
+        </div>
+
+        <div class="sort-status" x-show="isSorted">
+            <span class="sort-status-label">適用中:</span>
+            <template x-for="(entry, i) in sortKeysDisplay" :key="entry.key">
+                <span class="sort-status-item">
+                    <span class="sort-status-priority" x-text="i + 1"></span>
+                    <span x-text="entry.label"></span>
+                    <span x-text="entry.dir === 'asc' ? '↑' : '↓'"></span>
+                </span>
+            </template>
+        </div>
+
+        <ul class="todo-list" x-ref="todoList" :class="{ 'sorting-disabled': isDragDisabled }">
+            <template x-for="todo in filteredTodos" :key="todo.id">
+                <li class="todo-item"
+                    :class="{ 'completed': todo.completed, 'editing': editingTodoId === todo.id }"
+                    :data-id="todo.id">
+                    <div class="todo-content">
+                        <input type="checkbox" :checked="todo.completed" @change="toggleComplete(todo.id)"
+                            class="todo-checkbox">
+                        <template x-if="editingTodoId === todo.id">
+                            <div class="todo-edit-panel">
+                                <input type="text"
+                                    x-model="editTitle"
+                                    @keydown="handleEditTitleKeydown($event, todo.id)"
+                                    placeholder="タイトル"
+                                    class="todo-edit-input">
+                                <textarea
+                                    x-model="editDescription"
+                                    @keydown="handleEditDescriptionKeydown($event, todo.id)"
+                                    placeholder="本文（任意）"
+                                    class="todo-edit-textarea"></textarea>
+                                <p class="todo-edit-hint">Enter で保存 / 本文は Ctrl+Enter でも保存 / Esc でキャンセル</p>
+                                <div class="todo-edit-actions">
+                                    <button type="button" @click="saveEditing(todo.id)" class="todo-edit-control btn-edit-save">保存</button>
+                                    <button type="button" @click="cancelEditing()" class="todo-edit-control btn-edit-cancel">キャンセル</button>
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="editingTodoId !== todo.id">
+                            <div class="todo-texts">
+                                <button type="button"
+                                    @click="startEditing(todo)"
+                                    class="todo-display-button todo-title-button">
+                                    <span x-text="todo.text" class="todo-text" :class="{ 'line-through': todo.completed }"></span>
+                                </button>
+                                <button type="button"
+                                    @click="startEditing(todo)"
+                                    class="todo-display-button todo-description-button"
+                                    :class="{ 'is-empty': !todo.description, 'line-through': todo.completed }">
+                                    <span x-text="todo.description || '本文を追加'"></span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                    <button @click="deleteTodo(todo.id)" class="btn-delete">
+                        削除
+                    </button>
+                </li>
+            </template>
+        </ul>
+
+        <div x-show="filteredTodos.length === 0" class="empty-message">
+            <p x-show="filter === 'all'">ToDoがありません。新しいToDoを追加してください。</p>
+            <p x-show="filter === 'active'">未完了のToDoはありません。</p>
+            <p x-show="filter === 'completed'">完了済みのToDoはありません。</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+# Simple Deliver 設定ファイル
+# このアプリケーションを配信するための設定
+
+port: 8000
+base_dir: C:/CodeRoot/StaticApps
+
+1:
+  route: /
+  dir: apps/vue_rpg
+2:
+  route: /cdn_resources
+  dir: cdn_resources/vue.esm-browser.js

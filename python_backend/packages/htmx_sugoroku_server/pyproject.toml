@@ -1,0 +1,25 @@
+[project]
+name = "htmx_sugoroku_server"
+version = "0.1.0"
+description = "Server for delivering htmx_sugoroku app"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.2",
+    "util",
+]
+
+[project.scripts]
+htmx-sugoroku-server = "htmx_sugoroku_server.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/htmx_sugoroku_server"]
+
+[tool.uv.sources]
+util = { workspace = true }
+
+[tool.uv]
+package = true

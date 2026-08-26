@@ -1,0 +1,28 @@
+{
+  "name": "htmx-sugoroku",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:types": "openapi-typescript openapi/sugoroku-api.yaml -o src/generated/api-types.ts",
+    "dev": "npm run generate:types && vite",
+    "build": "npm run generate:types && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.13.5"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.5.1",
+    "@types/node": "^25.2.3",
+    "msw": "^2.7.3",
+    "openapi-typescript": "^7.6.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.1.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

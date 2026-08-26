@@ -1,0 +1,12 @@
+# Simple Deliver 設定ファイル
+# ビルド後の静的ファイルを配信するための設定
+
+port: 8000
+base_dir: C:/CodeRoot/StaticApps
+
+1:
+  route: /
+  dir: apps/htmx_sugoroku/dist
+2:
+  route: /cdn_resources
+  dir: cdn_resources

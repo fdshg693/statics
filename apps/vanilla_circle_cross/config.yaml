@@ -1,0 +1,9 @@
+# Simple Deliver 設定ファイル - Circle Cross ゲーム
+# このアプリケーションを配信するための設定
+
+port: 8000
+base_dir: C:/CodeRoot/StaticApps
+
+1:
+  route: /
+  dir: apps/vanilla_circle_cross

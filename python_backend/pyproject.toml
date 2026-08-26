@@ -1,0 +1,22 @@
+[project]
+name = "servers"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "flask>=3.1.2",
+    "simple_deliver",
+    "htmx_sugoroku_server",
+    "util",
+    "flask-cors>=6.0.2",
+]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+# ワークスペースから解決することを明示
+simple_deliver = { workspace = true }  
+htmx_sugoroku_server = { workspace = true } 
+util = { workspace = true }

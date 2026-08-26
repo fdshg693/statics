@@ -1,0 +1,199 @@
+openapi: "3.1.0"
+info:
+  title: すごろくゲーム API
+  description: HTMX すごろくゲームのバックエンド API 仕様
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:5000
+    description: ローカル開発サーバー
+
+paths:
+  /api/game/start:
+    post:
+      operationId: startGame
+      summary: 新しいゲームを開始する
+      responses:
+        "200":
+          description: ゲーム開始成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameStartResponse"
+
+  /api/game/roll:
+    post:
+      operationId: rollDice
+      summary: サイコロを振ってコマを進める
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RollDiceRequest"
+      responses:
+        "200":
+          description: サイコロ結果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RollDiceResponse"
+        "404":
+          description: ゲームが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/game/status:
+    get:
+      operationId: getGameStatus
+      summary: 現在のゲーム状態を取得する
+      parameters:
+        - name: game_id
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ゲーム状態
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameStatusResponse"
+        "404":
+          description: ゲームが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /info:
+    get:
+      operationId: getServerInfo
+      summary: サーバー情報を取得する
+      responses:
+        "200":
+          description: サーバー情報
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfoResponse"
+
+components:
+  schemas:
+    GameStartResponse:
+      type: object
+      required:
+        - game_id
+        - position
+        - board_size
+        - message
+      properties:
+        game_id:
+          type: string
+          format: uuid
+          description: ゲームの一意識別子
+        position:
+          type: integer
+          minimum: 0
+          description: プレイヤーの初期位置
+        board_size:
+          type: integer
+          minimum: 1
+          description: ボードのマス数
+        message:
+          type: string
+          description: ゲーム開始メッセージ
+
+    RollDiceRequest:
+      type: object
+      required:
+        - game_id
+        - current_position
+      properties:
+        game_id:
+          type: string
+          format: uuid
+          description: ゲームの一意識別子
+        current_position:
+          type: integer
+          minimum: 0
+          description: プレイヤーの現在位置
+
+    RollDiceResponse:
+      type: object
+      required:
+        - dice
+        - new_position
+        - is_finished
+        - message
+      properties:
+        dice:
+          type: integer
+          minimum: 1
+          maximum: 6
+          description: サイコロの出目
+        new_position:
+          type: integer
+          minimum: 0
+          description: 移動後の位置
+        is_finished:
+          type: boolean
+          description: ゴールに到達したか
+        message:
+          type: string
+          description: 結果メッセージ
+
+    GameStatusResponse:
+      type: object
+      required:
+        - game_id
+        - position
+        - board_size
+        - is_finished
+      properties:
+        game_id:
+          type: string
+          format: uuid
+        position:
+          type: integer
+          minimum: 0
+        board_size:
+          type: integer
+          minimum: 1
+        is_finished:
+          type: boolean
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: エラーメッセージ
+
+    InfoResponse:
+      type: object
+      required:
+        - message
+        - endpoints
+      properties:
+        message:
+          type: string
+        endpoints:
+          type: object
+          required:
+            - start
+            - roll
+            - status
+          properties:
+            start:
+              type: string
+            roll:
+              type: string
+            status:
+              type: string

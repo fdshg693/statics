@@ -1,0 +1,12 @@
+# Simple Deliver 設定ファイル
+# このアプリケーションを配信するための設定
+# uv run simple-deliverでローカルサーバーをたてて動作確認可能
+
+port: 8000
+base_dir: C:/CodeRoot/StaticApps
+1:
+  route: /
+  dir: apps/vue_janken
+2:
+  route: /cdn_resources
+  dir: cdn_resources

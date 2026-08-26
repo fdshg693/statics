@@ -1,0 +1,518 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    --card-bg: rgba(255, 255, 255, 0.45);
+    --card-border: 1px solid rgba(255, 255, 255, 0.4);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --btn-primary-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --btn-primary-text: #ffffff;
+    --btn-primary-shadow: 0 4px 15px rgba(79, 70, 229, 0.35);
+    --btn-secondary-bg: rgba(255, 255, 255, 0.5);
+    --btn-secondary-text: #334155;
+    --btn-secondary-border: 1px solid rgba(255, 255, 255, 0.3);
+    --btn-secondary-hover: rgba(255, 255, 255, 0.7);
+    --input-bg: rgba(255, 255, 255, 0.5);
+    --input-border: rgba(255, 255, 255, 0.4);
+    --input-focus-border: #4f46e5;
+    --input-focus-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    --input-text: #0f172a;
+    --input-placeholder: #94a3b8;
+    --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+    --blur: blur(16px);
+    
+    --message-error-bg: rgba(254, 226, 226, 0.5);
+    --message-error-text: #b91c1c;
+    --message-error-border: 1px solid rgba(239, 68, 68, 0.2);
+    
+    --message-success-bg: rgba(220, 252, 231, 0.5);
+    --message-success-text: #15803d;
+    --message-success-border: 1px solid rgba(34, 197, 94, 0.2);
+    
+    --orb-opacity: 0.5;
+}
+
+html.dark {
+    --bg-gradient: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
+    --card-bg: rgba(15, 23, 42, 0.45);
+    --card-border: 1px solid rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --btn-primary-bg: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --btn-primary-text: #ffffff;
+    --btn-primary-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    --btn-secondary-bg: rgba(255, 255, 255, 0.06);
+    --btn-secondary-text: #cbd5e1;
+    --btn-secondary-border: 1px solid rgba(255, 255, 255, 0.08);
+    --btn-secondary-hover: rgba(255, 255, 255, 0.12);
+    --input-bg: rgba(15, 23, 42, 0.4);
+    --input-border: rgba(255, 255, 255, 0.08);
+    --input-focus-border: #6366f1;
+    --input-focus-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+    --input-text: #f8fafc;
+    --input-placeholder: #64748b;
+    --shadow: 0 15px 50px -15px rgba(0, 0, 0, 0.4);
+    
+    --message-error-bg: rgba(239, 68, 68, 0.15);
+    --message-error-text: #fca5a5;
+    --message-error-border: 1px solid rgba(239, 68, 68, 0.25);
+    
+    --message-success-bg: rgba(34, 197, 94, 0.15);
+    --message-success-text: #86efac;
+    --message-success-border: 1px solid rgba(34, 197, 94, 0.25);
+    
+    --orb-opacity: 0.35;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-gradient);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: var(--text-primary);
+    overflow: hidden; /* prevents scrollbars from orbs floating out */
+    position: relative;
+    transition: background 0.5s ease, color 0.3s ease;
+}
+
+/* Background decorative orbs */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 1;
+    pointer-events: none;
+    opacity: var(--orb-opacity);
+    transition: opacity 0.5s ease;
+}
+
+.orb-1 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #818cf8 0%, #4f46e5 100%);
+    top: 10%;
+    left: 15%;
+    animation: float-1 20s infinite alternate ease-in-out;
+}
+
+.orb-2 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, #c084fc 0%, #a855f7 100%);
+    bottom: 10%;
+    right: 15%;
+    animation: float-2 25s infinite alternate ease-in-out;
+}
+
+@keyframes float-1 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -40px) scale(1.1); }
+    100% { transform: translate(-30px, 20px) scale(0.9); }
+}
+
+@keyframes float-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, 30px) scale(1.05); }
+    100% { transform: translate(40px, -50px) scale(0.95); }
+}
+
+/* Floating Theme Toggle Button */
+.theme-toggle-btn {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: var(--card-border);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1) rotate(15deg);
+    background: var(--btn-secondary-hover);
+}
+
+.theme-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* Toggle icon states */
+.theme-toggle-btn .sun-icon {
+    display: none;
+}
+
+.theme-toggle-btn .moon-icon {
+    display: block;
+}
+
+html.dark .theme-toggle-btn .sun-icon {
+    display: block;
+}
+
+html.dark .theme-toggle-btn .moon-icon {
+    display: none;
+}
+
+.theme-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    transition: transform 0.5s ease;
+}
+
+html.dark .theme-toggle-btn svg {
+    color: #f59e0b; /* Nice warm sun color in dark mode */
+}
+
+/* Container & Screens */
+.container {
+    background: var(--card-bg);
+    border: var(--card-border);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 40px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 10;
+    transition: background 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.screen {
+    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.screen.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1 {
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+p {
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    font-size: 15px;
+    color: var(--input-text);
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+    color: var(--input-placeholder);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: var(--input-focus-shadow);
+    background: var(--card-bg);
+}
+
+/* --- Floating Labels & Gradient Borders --- */
+.floating-group {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.floating-group input {
+    height: 56px;
+    padding: 22px 16px 6px 16px;
+    border: 1px solid transparent;
+    background: linear-gradient(var(--input-bg), var(--input-bg)) padding-box,
+                linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%) border-box;
+}
+
+html.dark .floating-group input {
+    background: linear-gradient(var(--input-bg), var(--input-bg)) padding-box,
+                linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) border-box;
+}
+
+.floating-group label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0px;
+    margin-bottom: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Floating states */
+.floating-group input:focus ~ label,
+.floating-group input:not(:placeholder-shown) ~ label,
+.floating-group input:-webkit-autofill ~ label {
+    top: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--input-focus-border);
+}
+
+.floating-group input:focus {
+    background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                var(--btn-primary-bg) border-box;
+    box-shadow: var(--input-focus-shadow);
+}
+
+/* --- Password Wrapper & Toggle Eye Button --- */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 52px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 11;
+    box-shadow: none !important;
+}
+
+.password-toggle-btn:hover {
+    color: var(--text-primary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.password-toggle-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.password-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    pointer-events: none;
+}
+
+/* --- Loading Spinner & States --- */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffffff;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+button.loading {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+button[type="submit"] {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    box-shadow: var(--btn-primary-shadow);
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--btn-primary-shadow), 0 8px 25px rgba(99, 102, 241, 0.25);
+    filter: brightness(1.05);
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+button[type="button"] {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: var(--btn-secondary-border);
+}
+
+button[type="button"]:hover {
+    background: var(--btn-secondary-hover);
+    transform: translateY(-1px);
+}
+
+button[type="button"]:active {
+    transform: translateY(0);
+}
+
+#loginBtn, #registerBtn {
+    margin-bottom: 8px;
+}
+
+#loginBtn {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    box-shadow: var(--btn-primary-shadow);
+}
+
+#loginBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--btn-primary-shadow), 0 8px 25px rgba(99, 102, 241, 0.25);
+    filter: brightness(1.05);
+}
+
+#registerBtn {
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: var(--btn-secondary-border);
+}
+
+#registerBtn:hover {
+    background: var(--btn-secondary-hover);
+    transform: translateY(-2px);
+}
+
+#logoutBtn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+#logoutBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    filter: brightness(1.05);
+}
+
+#logoutBtn:active {
+    transform: translateY(0);
+}
+
+.message {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.message.error {
+    display: block;
+    background: var(--message-error-bg);
+    color: var(--message-error-text);
+    border: var(--message-error-border);
+}
+
+.message.success {
+    display: block;
+    background: var(--message-success-bg);
+    color: var(--message-success-text);
+    border: var(--message-success-border);
+}
+
+#username {
+    font-weight: 700;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Battle Game</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Import map for Vue -->
+    <script type="importmap">
+    {
+        "imports": {
+            "vue": "/cdn_resources/vue.esm-browser.js"
+        }
+    }
+    </script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Game Title -->
+        <header class="game-header">
+            <h1>{{ gameTitle }}</h1>
+            <div class="header-info">
+                <div class="floor-indicator">{{ floor }}階 (戦闘 {{ battlesOnCurrentFloor }} / {{ battlesPerFloor }})</div>
+                <button @click="openInventory" class="inventory-btn">
+                    🎒 インベントリ ({{ inventoryCount }})
+                </button>
+            </div>
+        </header>
+
+        <!-- Battle Arena -->
+        <div class="battle-arena">
+            <!-- Player Status -->
+            <div class="character-panel player-panel">
+                <h2>プレイヤー</h2>
+                <div class="character-info">
+                    <div class="character-name">{{ player.name }}</div>
+                    <div class="status-bar">
+                        <label>HP:</label>
+                        <div class="hp-bar">
+                            <div class="hp-bar-fill" :style="{ width: playerHpPercentage + '%' }"></div>
+                            <span class="hp-text">{{ player.hp }} / {{ player.maxHp }}</span>
+                        </div>
+                    </div>
+                    <div class="status-bar">
+                        <label>MP:</label>
+                        <div class="hp-bar">
+                            <div class="hp-bar-fill mp-bar-fill" :style="{ width: playerMpPercentage + '%' }"></div>
+                            <span class="hp-text">{{ player.mp }} / {{ player.maxMp }}</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <label>攻撃力:</label>
+                        <span>{{ player.attack }}</span>
+                    </div>
+                    <div class="status-item">
+                        <label>防御力:</label>
+                        <span>{{ player.defense }}</span>
+                    </div>
+                    <div class="status-item">
+                        <label>レベル:</label>
+                        <span>{{ player.level }}</span>
+                    </div>
+                    <div class="status-bar">
+                        <label>EXP:</label>
+                        <div class="hp-bar">
+                            <div class="hp-bar-fill exp-bar" :style="{ width: playerExpPercentage + '%' }"></div>
+                            <span class="hp-text">{{ player.exp }} / {{ player.expToNextLevel }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VS Indicator -->
+            <div class="vs-indicator">
+                <span>VS</span>
+            </div>
+
+            <!-- Enemy Status -->
+            <div class="character-panel enemy-panel"
+                :class="{ 'leader': enemy?.type === 'leader', 'boss': enemy?.type === 'boss' }">
+                <h2>敵</h2>
+                <div class="character-info" v-if="enemy">
+                    <div class="character-name"
+                        :class="{ 'leader': enemy.type === 'leader', 'boss': enemy.type === 'boss' }">{{ enemy.name }}
+                    </div>
+                    <div class="status-bar">
+                        <label>HP:</label>
+                        <div class="hp-bar">
+                            <div class="hp-bar-fill enemy-hp" :style="{ width: enemyHpPercentage + '%' }"></div>
+                            <span class="hp-text">{{ enemy.hp }} / {{ enemy.maxHp }}</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <label>攻撃力:</label>
+                        <span>{{ enemy.attack }}</span>
+                    </div>
+                    <div class="status-item">
+                        <label>防御力:</label>
+                        <span>{{ enemy.defense }}</span>
+                    </div>
+                </div>
+                <div v-else class="no-enemy">
+                    <p>敵がいません</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-panel">
+            <h3>行動選択</h3>
+            <div class="action-buttons">
+                <button @click="attack" :disabled="!canAttack" class="action-btn attack-btn">
+                    ⚔️ 攻撃
+                </button>
+                <button @click="heal" :disabled="!canHeal" class="action-btn heal-btn">
+                    ❤️ 回復
+                </button>
+                <button @click="defend" :disabled="!canDefend" class="action-btn defend-btn">
+                    🛡️ 防御
+                </button>
+                <button @click="escape" :disabled="!canEscape" class="action-btn escape-btn">
+                    🏃 逃げる
+                </button>
+            </div>
+            <div class="game-controls">
+                <button @click="startNewBattle" :disabled="!canStartNewBattle" class="control-btn new-battle-btn">
+                    新しい戦闘
+                </button>
+                <button @click="saveAndReturnToStart" class="control-btn save-return-btn">
+                    記録して戻る
+                </button>
+            </div>
+        </div>
+
+        <!-- Programmable Action Panel -->
+        <div class="script-panel">
+            <div class="script-header">
+                <h3>プログラマブルアクション</h3>
+                <label class="script-toggle">
+                    <input type="checkbox" v-model="scriptEnabledProxy">
+                    <span>スクリプト有効</span>
+                </label>
+            </div>
+            <p class="script-note">
+                1ターンにつき1回、攻撃/回復/防御/逃走/ポーション使用のいずれかを命令できます。
+            </p>
+            <textarea v-model="scriptEditor" class="script-input"
+                placeholder="例: if (player.hpRate < 0.3 && player.canHeal()) { heal(); } else { attack(); }">
+            </textarea>
+            <div class="script-controls">
+                <button @click="applyScript" class="script-btn apply-btn">保存/適用</button>
+                <button @click="runScriptOnce" :disabled="!canRunScript" class="script-btn run-btn">実行</button>
+                <button @click="clearScriptLogs" class="script-btn clear-btn">ログクリア</button>
+            </div>
+            <div v-if="lastScriptError" class="script-error">⚠️ {{ lastScriptError }}</div>
+            <div class="script-logs">
+                <div class="script-logs-header">ログ</div>
+                <div v-if="scriptLogs.length === 0" class="script-log-empty">ログはありません</div>
+                <div v-for="(line, idx) in scriptLogs" :key="idx" class="script-log-item">
+                    {{ line }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Message Display -->
+        <div class="message-area">
+            <h3>バトルログ</h3>
+            <div class="message-list">
+                <div v-for="(message, index) in messages" :key="index" class="message-item" :class="message.type">
+                    {{ message.text }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Modal -->
+        <div v-if="showInventory" class="modal-overlay" @click="closeInventory">
+            <div class="modal-content inventory-modal" @click.stop>
+                <div class="modal-header">
+                    <h2>🎒 インベントリ</h2>
+                    <button @click="closeInventory" class="modal-close">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Gold Display -->
+                    <div class="gold-display">
+                        <h3>💰 所持ゴールド: {{ gold }}G</h3>
+                    </div>
+
+                    <!-- Inventory Tabs -->
+                    <div class="inventory-tabs">
+                        <button @click="inventoryTab = 'all'" :class="{ active: inventoryTab === 'all' }"
+                            class="tab-btn">
+                            すべて ({{ inventoryItems.length }})
+                        </button>
+                        <button @click="inventoryTab = 'weapons'" :class="{ active: inventoryTab === 'weapons' }"
+                            class="tab-btn">
+                            武器 ({{ weaponItems.length }})
+                        </button>
+                        <button @click="inventoryTab = 'potions'" :class="{ active: inventoryTab === 'potions' }"
+                            class="tab-btn">
+                            ポーション ({{ potionItems.length }})
+                        </button>
+                    </div>
+
+                    <!-- Items List -->
+                    <div class="items-list">
+                        <div v-if="currentTabItems.length === 0" class="empty-message">
+                            アイテムがありません
+                        </div>
+                        <div v-for="item in currentTabItems" :key="item.id" class="item-card"
+                            :class="'rarity-' + item.rarity">
+                            <div class="item-header">
+                                <span class="item-icon">{{ getItemIcon(item.type) }}</span>
+                                <span class="item-name">{{ item.name }}</span>
+                                <span class="item-rarity">{{ getRarityBadge(item.rarity) }}</span>
+                            </div>
+                            <div class="item-details">
+                                <div v-if="item.type === 'weapon'" class="item-stat">
+                                    攻撃力 +{{ item.attackBonus }}
+                                </div>
+                                <div v-if="item.type === 'potion'" class="item-stat">
+                                    回復量: {{ item.healAmount }}HP
+                                </div>
+                                <div v-if="item.type === 'potion'" class="item-actions">
+                                    <button class="item-use-btn" @click="usePotion(item.id)" :disabled="!canUsePotion">
+                                        使う
+                                    </button>
+                                    <span v-if="battleState === 'fighting'" class="item-use-note">1ターン消費</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load game logic and Vue app as modules -->
+    <script type="module" src="/js/battle/game.js"></script>
+    <script type="module" src="/js/battle/app.js"></script>
+</body>
+
+</html>

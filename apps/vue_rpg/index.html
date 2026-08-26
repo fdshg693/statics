@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Battle Game - Start</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="start-container">
+        <h1>⚔️ RPG Battle Game ⚔️</h1>
+        <p class="subtitle">冒険の世界へようこそ</p>
+
+        <div class="button-container">
+            <button class="continue-btn" id="continueBtn" onclick="continueGame()">
+                🔄 再開
+            </button>
+            <button class="new-game-btn" onclick="newGame()">
+                ✨ 新たに始める
+            </button>
+            <button class="history-btn" onclick="window.location.href='history.html'">
+                📜 保存履歴
+            </button>
+            <button class="reset-btn" id="resetBtn" onclick="resetGame()">
+                🗑️ ゲームリセット
+            </button>
+        </div>
+
+        <div class="save-info" id="saveInfo"></div>
+    </div>
+
+    <script type="module" src="js/screens/start.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18",
+        "react-dom/client": "https://esm.sh/react-dom@18/client",
+        "react/jsx-runtime": "https://esm.sh/react@18/jsx-runtime",
+        "sucrase": "https://esm.sh/sucrase"
+      }
+    }
+  </script>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <!-- TypeScript + JSX コード -->
+    <script type="text/tsx" id="app-code">
+    import { useState, FC } from 'react'
+    import { createRoot } from 'react-dom/client'
+
+    interface CounterProps {
+      initialValue: number
+    }
+
+    const Counter: FC<CounterProps> = ({ initialValue }) => {
+      const [count, setCount] = useState<number>(initialValue)
+      
+      const increment = (): void => {
+        setCount(prev => prev + 1)
+      }
+
+      return (
+        <div>
+          <h1>Count: {count}</h1>
+          <button onClick={increment}>Increment</button>
+        </div>
+      )
+    }
+
+    const App: FC = () => {
+      return (
+        <div>
+          <h1>React + TypeScript + JSX (No Build Step)</h1>
+          <Counter initialValue={0} />
+        </div>
+      )
+    }
+
+    createRoot(document.getElementById('root')!).render(<App />)
+  </script>
+
+    <!-- ローダー -->
+    <script type="module">
+        import { transform } from 'sucrase'
+
+        const tsxCode = document.getElementById('app-code').textContent
+
+        const result = transform(tsxCode, {
+            transforms: ['typescript', 'jsx'],
+            jsxRuntime: 'automatic',
+            jsxImportSource: 'react',
+            production: true
+        })
+
+        const blob = new Blob([result.code], { type: 'application/javascript' })
+        const url = URL.createObjectURL(blob)
+        await import(url)
+    </script>
+</body>
+
+</html>

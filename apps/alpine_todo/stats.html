@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>統計・分析 - ToDoアプリ</title>
+    <link rel="stylesheet" href="stats.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/shared/orderManager.js"></script>
+    <script src="js/shared/toast.js"></script>
+    <script src="js/shared/todoRepository.js"></script>
+    <script src="js/shared/todoService.js"></script>
+    <script src="js/todoStore.js"></script>
+    <script src="js/stats/statsCalculator.js"></script>
+    <script src="js/stats/chartDataBuilder.js"></script>
+    <script src="js/stats/motivationMessage.js"></script>
+    <script src="js/stats/chartRenderer.js"></script>
+    <script src="js/stats.js"></script>
+    <script defer src="../../cdn_resources/alpine.min.js"></script>
+</head>
+
+<body>
+    <div class="container" x-data="statsApp">
+        <header>
+            <h1>📊 統計・分析</h1>
+            <a href="index.html" class="back-link">← ToDoリストに戻る</a>
+        </header>
+
+        <!-- 概要統計 -->
+        <div class="summary-section">
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-content">
+                    <div class="stat-value" x-text="stats.total"></div>
+                    <div class="stat-label">総タスク数</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-value" x-text="stats.completed"></div>
+                    <div class="stat-label">完了済み</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-content">
+                    <div class="stat-value" x-text="stats.active"></div>
+                    <div class="stat-label">未完了</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-content">
+                    <div class="stat-value" x-text="stats.completionRate + '%'"></div>
+                    <div class="stat-label">完了率</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 期間フィルター -->
+        <div class="filter-section">
+            <button @click="setPeriod('daily')" :class="{ 'active': period === 'daily' }" class="btn-filter">
+                日別
+            </button>
+            <button @click="setPeriod('weekly')" :class="{ 'active': period === 'weekly' }" class="btn-filter">
+                週別
+            </button>
+            <button @click="setPeriod('monthly')" :class="{ 'active': period === 'monthly' }" class="btn-filter">
+                月別
+            </button>
+        </div>
+
+        <!-- グラフセクション -->
+        <div class="chart-section">
+            <h2>
+                <span x-show="period === 'daily'">日別完了タスク数</span>
+                <span x-show="period === 'weekly'">週別完了タスク数</span>
+                <span x-show="period === 'monthly'">月別完了タスク数</span>
+            </h2>
+            <div class="chart-container">
+                <canvas x-ref="chart"></canvas>
+            </div>
+            <div x-show="chartData.length === 0" class="empty-message">
+                <p>完了したタスクがありません</p>
+            </div>
+        </div>
+
+        <!-- 詳細統計 -->
+        <div class="details-section">
+            <h2>詳細統計</h2>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">平均完了時間</span>
+                    <span class="detail-value" x-text="stats.avgCompletionTime"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">最速完了時間</span>
+                    <span class="detail-value" x-text="stats.fastestCompletion"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">最長完了時間</span>
+                    <span class="detail-value" x-text="stats.slowestCompletion"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">今日完了したタスク</span>
+                    <span class="detail-value" x-text="stats.todayCompleted + '件'"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">今週完了したタスク</span>
+                    <span class="detail-value" x-text="stats.weekCompleted + '件'"></span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">今月完了したタスク</span>
+                    <span class="detail-value" x-text="stats.monthCompleted + '件'"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- モチベーションメッセージ -->
+        <div class="motivation-section" x-show="motivationMessage">
+            <div class="motivation-card">
+                <div class="motivation-icon">🎉</div>
+                <div class="motivation-text" x-text="motivationMessage"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

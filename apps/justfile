@@ -1,0 +1,42 @@
+# 各プロジェクトを簡単に起動するための justfile
+set shell := ["cmd.exe", "/c"]
+
+default:
+    @just --list
+
+# alpine_todoの起動 (ルートからのHTTPサーバー)
+alpine_todo:
+    cd .. && python -m http.server 8000
+
+# blackjackの起動 (ルートからのHTTPサーバー)
+blackjack:
+    cd .. && python -m http.server 8000
+
+# svelte_baseballの起動
+svelte_baseball:
+    cd svelte_baseball && npm run dev
+
+# svelte_baseballのパッケージインストール
+svelte_baseball-install:
+    cd svelte_baseball && npm install
+
+# htmx_sugorokuの起動
+htmx_sugoroku:
+    cd ..\python_backend && uv run simple-deliver ..\apps\htmx_sugoroku\config.yaml
+
+# simple_loginの起動
+simple_login:
+    cd ..\python_backend && uv run simple-deliver ..\apps\simple_login\config.yaml
+
+# vanilla_circle_crossの起動
+vanilla_circle_cross:
+    cd ..\python_backend && uv run simple-deliver ..\apps\vanilla_circle_cross\config.yaml
+
+# vue_jankenの起動
+vue_janken:
+    cd ..\python_backend && uv run simple-deliver ..\apps\vue_janken\config.yaml
+
+# vue_rpgのビルドと起動
+vue_rpg:
+    cd .. && tsc -p apps/vue_rpg/tsconfig.json
+    cd ..\python_backend && uv run simple-deliver ..\apps\vue_rpg\config.yaml

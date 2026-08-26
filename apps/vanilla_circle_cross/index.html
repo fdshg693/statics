@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>〇×ゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>〇×ゲーム</h1>
+        
+        <!-- 設定エリア -->
+        <div id="settings">
+            <label for="boardSizeSelect">ボードサイズ:</label>
+            <select id="boardSizeSelect">
+                <option value="3">3x3</option>
+                <option value="4">4x4</option>
+                <option value="5">5x5</option>
+            </select>
+            
+            <label for="winConditionSelect">揃える数:</label>
+            <select id="winConditionSelect">
+                <option value="3">3</option>
+            </select>
+            
+            <button id="applySettingsBtn">適用</button>
+        </div>
+        
+        <div id="message">〇の番です</div>
+        
+        <!-- ボードは動的に生成されます -->
+        <div class="board" id="board"></div>
+        
+        <button id="resetBtn">リセット</button>
+    </div>
+    
+    <!-- モジュール形式でスクリプトを読み込み -->
+    <script type="module" src="js/core/GameConfig.js"></script>
+    <script type="module" src="js/core/GameState.js"></script>
+    <script type="module" src="js/core/GameLogic.js"></script>
+    <script type="module" src="js/managers/BoardManager.js"></script>
+    <script type="module" src="js/managers/UIManager.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
