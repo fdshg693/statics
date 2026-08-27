@@ -313,7 +313,7 @@ DNS-01 + Cloudflare APIトークン（`cert-manager-webhook-cloudflare` 等）�
 - （済）**Phase 1**: `infra/docker/*` を作成し、ローカルで `docker build` して両イメージが正しく動くか確認
   （各アプリの絶対パス参照問題の洗い出し・修正含む）
 - （済）**Phase 2**: `infra/k8s/base` + `overlays/kind` を作成、KIND + ArgoCDで動作確認（Section 10）
-- **Phase 3**: `htmx_sugoroku_server` を gunicorn 対応に修正（要合意）
+- （済）**Phase 3**: `htmx_sugoroku_server` を gunicorn 対応に修正（要合意）
 - **Phase 4**: `.github/workflows/build-and-push.yaml` を作成、ghcr.ioへのpushを確認
 - **Phase 5**: `infra/terraform` でAKSをプロビジョニング
 - **Phase 6**: Cloudflareでドメイン取得（要ユーザー確認・課金発生）、DNS設定
