@@ -315,7 +315,7 @@ DNS-01 + Cloudflare APIトークン（`cert-manager-webhook-cloudflare` 等）�
 - （済）**Phase 2**: `infra/k8s/base` + `overlays/kind` を作成、KIND + ArgoCDで動作確認（Section 10）
 - （済）**Phase 3**: `htmx_sugoroku_server` を gunicorn 対応に修正（要合意）
 - （済）**Phase 4**: `.github/workflows/build-and-push.yaml` を作成、ghcr.ioへのpushを確認
-- **Phase 5**: `infra/terraform` でAKSをプロビジョニング
+- （済）**Phase 5**: `infra/terraform` でAKSをプロビジョニング
 - **Phase 6**: Cloudflareでドメイン取得（要ユーザー確認・課金発生）、DNS設定
 - **Phase 7**: AKSにingress-nginx / cert-manager / ArgoCDをブートストラップ、
   `infra/argocd/apps/statics-aks-app.yaml` を登録して本番同期
@@ -325,7 +325,7 @@ DNS-01 + Cloudflare APIトークン（`cert-manager-webhook-cloudflare` 等）�
 
 ## 12. 未確定・要検討事項
 
-- Azureサブスクリプション / リージョン / 課金上限
+- （済）Azureサブスクリプション / リージョン → サブスクリプション `default-subsc`、リージョン `japaneast` で確定（Phase 5で `rg-statics` に `statics-aks` を作成済み）。課金上限は引き続き未設定。
 - ghcr.ioイメージをpublicにするか、private + imagePullSecretsにするか
 - ドメイン名そのもの（未取得）
 - `htmx_sugoroku_server` の `games = {}` はインメモリ状態 → replicas: 2 にするとPod間で

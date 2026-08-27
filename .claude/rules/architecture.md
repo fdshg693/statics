@@ -14,3 +14,13 @@ paths:
 - `apps/justfile` に各アプリの起動コマンドがまとまっているが、`svelte_baseball` 以外は暗黙に `python_backend` へ `cd` してから `simple-deliver` を呼ぶ構造になっている点に注意。
 - `python_backend`（uv workspace）は静的配信サーバー (`simple_deliver`) と `htmx_sugoroku` 専用の Flask API (`htmx_sugoroku_server`) を提供。詳細は [[SimpleDeliver]] / [[HtmxSugorokuGameApi]] を参照。
 - `experiments/` は単体検証用の使い捨て HTML。恒久的なアプリとしては扱わない。
+
+## infra/ 構成（AKS + ArgoCD + Caddy 移行）
+
+`apps/` の全静的アプリを AKS 上の1つの Caddy Pod にパスルーティングで集約し、`htmx_sugoroku` の API のみ別 Pod（gunicorn）に切り出す構成。詳細な設計・作業フェーズは [[PLAN]]（リポジトリ直下 `PLAN.md`）を参照。
+
+- `infra/docker/`: `static.Dockerfile`（全静的アプリをビルドして `caddy:2-alpine` に固める）、`htmx-sugoroku-api.Dockerfile`（`python_backend` の `htmx_sugoroku_server` を gunicorn で起動）、`Caddyfile`。
+- `infra/terraform/`: AKS クラスタ（リソースグループ `rg-statics`、クラスタ名 `statics-aks`、japaneast）を IaC でプロビジョニング。tfstate はリモート管理（リソースグループ `rg-statics-tfstate` / ストレージアカウント `ststaticstfstate` / コンテナ `tfstate`、`backend.tf` で参照）。`terraform apply` は実課金を伴うため実行前に必ずユーザー確認を取ること。
+- `infra/k8s/`: `base/`（Namespace・Deployment・Service・Ingress の共通マニフェスト）+ `overlays/{kind,aks}`（Kustomize でイメージタグ・TLS有無・レプリカ数を差分管理）。
+- `infra/argocd/`: `infra-apps/`（ingress-nginx・cert-manager を ArgoCD 管理下に）、`apps/`（`overlays/kind` / `overlays/aks` を参照する Application）。ArgoCD 自体は鶏卵問題を避けるため手動ブートストラップ。
+- `.github/workflows/build-and-push.yaml`: `apps/**` / `python_backend/**` の変更を ghcr.io にビルド&push し、`overlays/aks` のイメージタグを自動更新。
