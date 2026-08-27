@@ -1,13 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
   - ../../base
-
 images:
   - name: statics-web
     newName: ghcr.io/fdshg693/statics-web
-    newTag: dev
+    newTag: 75a709d6463783072c5a75f9d7a43c66b63100c5
   - name: statics-htmx-sugoroku-api
     newName: ghcr.io/fdshg693/statics-htmx-sugoroku-api
-    newTag: dev
+    newTag: 75a709d6463783072c5a75f9d7a43c66b63100c5
