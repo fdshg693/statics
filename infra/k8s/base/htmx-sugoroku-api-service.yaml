@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: htmx-sugoroku-api
+spec:
+  selector:
+    app: htmx-sugoroku-api
+  ports:
+    - port: 5000
+      targetPort: 5000

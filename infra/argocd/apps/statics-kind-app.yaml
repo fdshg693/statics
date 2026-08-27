@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: statics-kind
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/fdshg693/statics.git
+    targetRevision: main
+    path: infra/k8s/overlays/kind
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: statics
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

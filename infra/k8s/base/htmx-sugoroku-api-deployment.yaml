@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: htmx-sugoroku-api
+  labels:
+    app: htmx-sugoroku-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: htmx-sugoroku-api
+  template:
+    metadata:
+      labels:
+        app: htmx-sugoroku-api
+    spec:
+      containers:
+        - name: htmx-sugoroku-api
+          image: statics-htmx-sugoroku-api:dev
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /info
+              port: 5000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /info
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10

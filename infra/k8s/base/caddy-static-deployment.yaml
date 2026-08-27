@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: caddy-static
+  labels:
+    app: caddy-static
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: caddy-static
+  template:
+    metadata:
+      labels:
+        app: caddy-static
+    spec:
+      containers:
+        - name: caddy-static
+          image: statics-web:dev
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
