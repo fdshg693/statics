@@ -1,0 +1,94 @@
+name: Build and Push Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "python_backend/**"
+      - "cdn_resources/**"
+      - "infra/docker/**"
+      - ".github/workflows/build-and-push.yaml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: build-and-push-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - image: statics-web
+            dockerfile: infra/docker/static.Dockerfile
+          - image: statics-htmx-sugoroku-api
+            dockerfile: infra/docker/htmx-sugoroku-api.Dockerfile
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve short SHA
+        id: sha
+        run: echo "sha=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Set lowercase owner
+        id: owner
+        run: |
+          echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.image }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ghcr.io/${{ steps.owner.outputs.owner }}/${{ matrix.image }}:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.owner }}/${{ matrix.image }}:latest
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  update-manifest:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set image tags in overlays/aks
+        run: |
+          yq -i '(.images[] | select(.name == "statics-web") | .newTag) = "${{ needs.build-and-push.outputs.sha }}"' infra/k8s/overlays/aks/kustomization.yaml
+          yq -i '(.images[] | select(.name == "statics-htmx-sugoroku-api") | .newTag) = "${{ needs.build-and-push.outputs.sha }}"' infra/k8s/overlays/aks/kustomization.yaml
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No manifest changes to commit"
+            exit 0
+          fi
+          git add infra/k8s/overlays/aks/kustomization.yaml
+          git commit -m "chore: bump aks image tags to ${{ needs.build-and-push.outputs.sha }}"
+          git push origin HEAD:main
